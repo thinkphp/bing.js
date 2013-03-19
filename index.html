@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+   <title>Microsoft's Bing Search on pure JS</title>
+   <style type="text/css">
+body {
+      margin: 10px;
+      font-family: Helvetica, Arial;
+    }
+    a {
+      color: navy;
+    }
+    .outer {
+      padding: 10px 10px 0 10px;
+      background: #eee;
+    }
+
+
+input.gsc-input {
+      border-color: #BCCDF0;
+      font-size: 1.5em;
+      background-image: none !important;
+      padding: 0.5em !important;
+      border-radius: 10px;
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 10px;
+      color: #555;
+      box-sizing: border-box;
+      width: 67%;
+      border: 1px solid #fff
+}
+
+input.gsc-input:hover {
+      color: black;
+      border-color: black;
+      border: 1px solid #000
+}
+
+input.gsc-search-button {
+    border-color: #666666;
+    background-color: #CECECE;
+    font-size: 2em;
+    height: auto;
+}
+
+.yui-g{
+background: #eee;
+padding: 10px;
+}
+
+   </style>
+</head>
+<body>
+<div id="doc2" class="yui-t7">
+   <div id="hd" role="banner"><h1>Bing Search based on Pure JavaScript</h1></div>
+   <div id="bd" role="main">
+	<div class="yui-g">
+             <div>
+                <form id="googleform">
+                <label for="q">Bing</label>
+                <input class="gsc-input" type="text" id="q" name="q" placeholder="" required autocomplete="off" value="mootools"/> 
+                <input class="gsc-search-button" type="submit" id="send" value="Go!"/> 
+               </form>
+             </div> 
+	</div>
+           <div id="results">
+               <div id="bing"></div>
+           </div>
+	</div>
+   <div id="ft" role="contentinfo"><p>&copy; 2013 Some Rights Reserved | created by  @<a href="http://twitter.com/thinkphp">thinkphp</a> | Download on <a href="http://github.com/thinkphp/bing.js">GitHub </a></p></div>
+</div>
+
+<script type="text/javascript" src="bing.class.js"></script>
+<script type="text/javascript">
+
+var $ = function( id ){ return document.getElementById( id ) }
+    f = $('googleform'),
+    b = $('bing'),
+    r = $('results'),
+    q = $('q');
+
+var bing = Bing( {appid: '49EB4B94127F7C7836C96DEB3F2CD8A6D12BDB71'} );
+
+addEvent(f, 'submit', function( e ){
+
+    //for FF
+    if(e){
+    e.preventDefault()
+    e.stopPropagation()
+    }
+    
+    //for IE
+    if(window.event){
+    window.event.returnValue = false
+    window.event.cancelBubble = true
+    }
+
+    //empty results
+    b.innerHTML = "Loading..."
+ 
+    bing.search(q.value, function( data ){
+               
+                var res = data.SearchResponse.Web.Results;
+
+                if(res && res.length > 0) { 
+
+                   var all = res.length,
+
+                       out = '<h2>Results</h2><ol>';   
+    
+                       for(var i = 0;i < all; i++) {
+
+                           out += '<li><h3><a href="'+res[i].Url+'">'+res[i].Title+'</a></h3><p>'+res[i].Description+'<span>'+res[i].DisplayUrl+'</span></p></li>';
+                       }
+
+                       out += '</ol>'; 
+
+                   b.innerHTML = out; 
+
+                } else {
+
+                  b.innerHTML = '<h2>Bing</h2><ul><li><h3>No results found. </h3></li></ul>';
+                }
+    });
+
+}, false);
+
+function addEvent(elem, evType, fn, capture) {
+
+    if(elem.addEventListener) {
+
+       return elem.addEventListener(evType, fn, capture)
+
+    } else if(elem.attachEvent) {
+
+       elem.attachEvent('on' + evType, fn)
+
+    } else {
+
+       elem['on'+evType] = fn
+    }
+}
+
+</script>
+</body>
+</html>
